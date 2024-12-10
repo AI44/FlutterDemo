@@ -58,10 +58,31 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  assets:
+    - graphics/
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
+  #
+  # asset 的声明顺序是无关紧要的，asset的实际目录可以是任意文件夹。
+  # 还指定文件夹：
+  #   - assets/images/
+  #   - assets/files/
+  #
+  # 如果应用程序目录中有以下文件:
+  # …/pubspec.yaml
+  # …/graphics/my_icon.png
+  # …/graphics/background.png
+  # …/graphics/dark/background.png
+  # …
+  # 然后pubspec.yaml文件中只需包含:
+  # flutter:
+  #  assets:
+  #    - graphics/background.png
+  # 那么这两个graphics/background.png和graphics/dark/background.png 都将包含在您的 asset bundle中。
+  # 前者被认为是main asset（主资源），后者被认为是一种变体（variant）。
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -88,3 +109,28 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+#  依赖本地包
+#  如果我们正在本地开发一个包，包名为pkg1，我们可以通过下面方式依赖：
+#  dependencies:
+#    pkg1:
+#      path: ../../code/pkg1
+#
+#  依赖Git
+#  你也可以依赖存储在Git仓库中的包。如果软件包位于仓库的根目录中，请使用以下语法：
+#  dependencies:
+#    pkg1:
+#      git:
+#        url: git://github.com/xxx/pkg1.git
+#
+#  上面假定包位于Git存储库的根目录中。如果不是这种情况，可以使用path参数指定相对位置，例如：
+#  dependencies:
+#    package1:
+#      git:
+#        url: git://github.com/flutter/packages.git
+#        path: packages/package1
+#
+#  其他依赖方式：https://www.dartlang.org/tools/pub/dependencies
+
+# assets资源加载逻辑：
+# https://book.flutterchina.club/chapter2/flutter_assets_mgr.html#_2-6-3-加载-assets

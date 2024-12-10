@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+
 import 'demo1.dart';
+import 'demo2.dart';
+import 'demo3.dart';
+import 'demo4.dart';
+import 'demo5.dart';
+import 'demo8.dart';
 
 void main() {
   print("--------------- start main");
@@ -35,7 +41,42 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      // ------------------------- demo test
+      // home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      // home: const StateLifecycleTest(),
+      // home: const GetStateObjectRoute(),
+      // home: const CupertinoTestRoute(),
+      // home: const TapboxA(),
+      // home: const ParentWidget(),
+      // home: const ParentWidgetC(),
+      // home: const Page1(),
+      // home: const ImageBgPage(),
+      // home: const BaseComponentDemo(),
+      home: const BaseComponentDemo2(),
+      routes: {
+        "Page1": (context) => const Page1(),
+        "Page2": (context) => Page2(text: ModalRoute.of(context)?.settings.arguments.toString() ?? ""),
+        "TapboxA": (context) => const TapboxA(),
+        "ImageBgPage": (context) => const ImageBgPage(),
+        "BaseComponentDemo2": (context) => const BaseComponentDemo2(),
+      },
+      /**
+       * 可以通过onGenerateRoute做一些全局的路由跳转前置处理逻辑。
+       *
+       * MaterialApp有一个onGenerateRoute属性，它在打开命名路由时可能会被调用，之所以说可能，
+       * 是因为当调用Navigator.pushNamed(...)打开命名路由时，如果指定的路由名在路由表中已注册，
+       * 则会调用路由表中的builder函数来生成路由组件；如果路由表中没有注册，才会调用onGenerateRoute来生成路由。
+       *
+       * 要实现上面控制页面权限的功能就非常容易：我们放弃使用路由表，
+       * 取而代之的是提供一个onGenerateRoute回调，然后在该回调中进行统一的权限控制
+       */
+      // onGenerateRoute: (settings) {
+      //   return MaterialPageRoute(builder: (context) {
+      //     String routeName = settings.name ?? "";
+      //     // 如果访问的路由页需要登录，但当前未登录，则直接返回登录页路由，
+      //     // 引导用户登录；其他情况则正常打开路由。
+      //   });
+      // },
     );
   }
 }
@@ -58,10 +99,16 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+/**
+ * 对于StatefulWidget，将build方法放在 State 中，可以给开发带来很大的灵活性
+ */
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() {
+    // 将状态更新逻辑封装在一个方法中，可以确保状态的更新是原子性的。当setState被调用时，Flutter框架会确保在状态更新和UI重建之间不会发生其他状态更改。
+    // 如果有多个setState调用在短时间内发生，它们可能会被合并为一个UI更新。
+    // setState的参数方法回调是在你调用setState时立即执行的，但UI的更新会在未来的某个时间点发生，这取决于Flutter框架的事件循环和渲染管道。
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
@@ -80,6 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+    // return const ContextRoute();
     return Scaffold(
       appBar: AppBar(
         // TRY THIS: Try changing the color here to a specific color (to
@@ -116,6 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            const Echo(text: "start12345678901234567890123456789012345678901234567890end"),
           ],
         ),
       ),
@@ -123,7 +172,9 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: _incrementCounter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.startFloat, // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
