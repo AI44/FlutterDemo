@@ -67,7 +67,7 @@ void main() {
     reportErrorAndLog(details); //上报
   };
   runZoned(
-    () => runApp(const MyApp()),
+    () => runApp(MyApp()),
     zoneSpecification: ZoneSpecification(
       // 拦截print
       print: (Zone self, ZoneDelegate parent, Zone zone, String line) {

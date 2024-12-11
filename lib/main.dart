@@ -1,25 +1,33 @@
 import 'package:flutter/material.dart';
 
+import 'PageProvider.dart';
 import 'demo1.dart';
 import 'demo2.dart';
-import 'demo3.dart';
 import 'demo4.dart';
-import 'demo5.dart';
-import 'demo8.dart';
 
 void main() {
   print("--------------- start main");
   Demo1().run();
 
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  final List<ItemData> list = PageProvider.getData();
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // 构建router
+    Map<String, WidgetBuilder> router = {
+      "Page2": (context) => Page2(text: ModalRoute.of(context)?.settings.arguments.toString() ?? ""),
+    };
+    for (var item in list) {
+      router[item.key] = item.builder;
+    }
+
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -41,25 +49,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      // ------------------------- demo test
-      // home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      // home: const StateLifecycleTest(),
-      // home: const GetStateObjectRoute(),
-      // home: const CupertinoTestRoute(),
-      // home: const TapboxA(),
-      // home: const ParentWidget(),
-      // home: const ParentWidgetC(),
-      // home: const Page1(),
-      // home: const ImageBgPage(),
-      // home: const BaseComponentDemo(),
-      home: const BaseComponentDemo2(),
-      routes: {
-        "Page1": (context) => const Page1(),
-        "Page2": (context) => Page2(text: ModalRoute.of(context)?.settings.arguments.toString() ?? ""),
-        "TapboxA": (context) => const TapboxA(),
-        "ImageBgPage": (context) => const ImageBgPage(),
-        "BaseComponentDemo2": (context) => const BaseComponentDemo2(),
-      },
+      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      routes: router,
       /**
        * 可以通过onGenerateRoute做一些全局的路由跳转前置处理逻辑。
        *
@@ -155,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
           // action in the IDE, or press "p" in the console), to see the
           // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             const Text(
               'You have pushed the button this many times:',
@@ -165,6 +156,20 @@ class _MyHomePageState extends State<MyHomePage> {
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const Echo(text: "start12345678901234567890123456789012345678901234567890end"),
+            Expanded(
+                child: ListView.builder(
+                    itemCount: PageProvider.getData().length,
+                    itemExtent: 40.0,
+                    itemBuilder: (context, index) {
+                      var list = PageProvider.getData();
+                      var item = list[index];
+                      return ListTile(
+                        title: Text(item.title),
+                        onTap: () {
+                          Navigator.of(context).pushNamed(item.key);
+                        },
+                      );
+                    })),
           ],
         ),
       ),
