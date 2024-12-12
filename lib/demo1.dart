@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 /**
  * @author Raining
  * @date 2024-12-06 09:30
@@ -38,6 +40,14 @@ class Demo1 {
       //无论成功或失败都会走到这里
       print("finally");
     });
+
+    var arr = [
+      1,
+      2,
+      if (kReleaseMode) ...[3, 4, 5], // 此写法可以用于动态加载组件
+      6
+    ];
+    print(arr);
   }
 
   /**

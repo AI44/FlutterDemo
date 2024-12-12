@@ -122,18 +122,23 @@ class PageProvider {
       ),
       ItemData(
         "ContainerDemo2",
-            (context) => const ContainerDemo2(),
+        (context) => const ContainerDemo2(),
         "容器类测试2",
       ),
       ItemData(
         "ContainerDemo3",
-            (context) => const ContainerDemo3(),
+        (context) => const ContainerDemo3(),
         "容器类测试3",
       ),
       ItemData(
         "ContainerDemo4",
-            (context) => const ContainerDemo4(),
+        (context) => const ContainerDemo4(),
         "单行缩放布局",
+      ),
+      ItemData(
+        "ContainerDemo5",
+        (context) => const ContainerDemo5(),
+        "Scaffold",
       ),
     });
 

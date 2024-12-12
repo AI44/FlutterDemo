@@ -9,6 +9,17 @@ import 'package:flutter/material.dart';
 class Demo9 {}
 
 /**
+ * 布局流程如下：
+ * 1. 上层组件向下层组件传递约束（constraints）条件。
+ * 2. 下层组件确定自己的大小，然后告诉上层组件。注意下层组件的大小必须符合父组件的约束。
+ * 3. 上层组件确定下层组件相对于自身的偏移和确定自身的大小（大多数情况下会根据子组件的大小来确定自身的大小）。
+ *
+ * 任何时候子组件都必须先遵守父组件的约束。
+ *
+ * 盒模型布局组件有两个特点：
+ * 1. 组件对应的渲染对象都继承自 RenderBox 类。
+ * 2. 在布局过程中父级传递给子级的约束信息由 BoxConstraints 描述。
+ *
  * LeafRenderObjectWidget：非容器类组件基类，Widget树的叶子节点，用于没有子节点的widget，通常基础组件都属于这一类，如Image。
  * SingleChildRenderObjectWidget：单子组件基类，包含一个子Widget，如：ConstrainedBox、DecoratedBox等。
  * MultiChildRenderObjectWidget：多子组件基类，包含多个子Widget，一般都有一个children参数，接受一个Widget数组。如Row、Column、Stack等。
@@ -95,7 +106,10 @@ class LayoutDemo extends StatelessWidget {
               child: const DecoratedBox(decoration: BoxDecoration(color: Colors.red)),
             ),
           ),
-          // 多重限制时，对于minWidth和minHeight来说，是取父子中相应数值较大的。
+          /**
+           * 多重限制时，对于minWidth和minHeight来说，是取父子中相应数值较大的。
+           * 对于maxWidth和maxHeight，是取父子中相应数值较小的。
+           */
           ConstrainedBox(
             constraints: const BoxConstraints(minWidth: 90.0, minHeight: 20.0), //父
             child: ConstrainedBox(
@@ -106,12 +120,18 @@ class LayoutDemo extends StatelessWidget {
           ConstrainedBox(
               constraints: const BoxConstraints(minWidth: 60.0, minHeight: 100.0), //父
               child: UnconstrainedBox(
-                //“去除”父级限制，但上方仍然有80的空白空间，也就是说父限制的minHeight(100.0)仍然是生效的，
-                // 只不过它不影响最终子元素redBox的大小，但仍然还是占有相应的空间。
-                // 任何时候子组件都必须遵守其父组件的约束。
-                // 需要注意，UnconstrainedBox 虽然在其子组件布局时可以取消约束（子组件可以为无限大），
-                // 但是 UnconstrainedBox 自身是受其父组件约束的，所以当 UnconstrainedBox 随着其子组件变大后，
-                // 如果UnconstrainedBox 的大小超过它父组件约束时，也会导致溢出报错。
+                /**
+                 * 如果没有中间的UnconstrainedBox，那么根据多重限制规则，那么最终将显示一个90×100的红色框。
+                 * 但是由于UnconstrainedBox “去除”了父ConstrainedBox的限制，
+                 * 则最终会按照子ConstrainedBox的限制来绘制redBox，即90×20。
+                 *
+                 * “去除”父级限制，但上方仍然有80的空白空间，也就是说父限制的minHeight(100.0)仍然是生效的，
+                 * 只不过它不影响最终子元素redBox的大小，但仍然还是占有相应的空间。
+                 * 任何时候子组件都必须遵守其父组件的约束。
+                 * 需要注意，UnconstrainedBox 虽然在其子组件布局时可以取消约束（子组件可以为无限大），
+                 * 但是 UnconstrainedBox 自身是受其父组件约束的，所以当 UnconstrainedBox 随着其子组件变大后，
+                 * 如果UnconstrainedBox 的大小超过它父组件约束时，也会导致溢出报错。
+                 */
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(minWidth: 90.0, minHeight: 20.0), //子
                   child: const DecoratedBox(decoration: BoxDecoration(color: Colors.red)),
@@ -457,6 +477,11 @@ class ResponsiveColumn extends StatelessWidget {
   }
 }
 
+/**
+ * 使用例子：
+ * LayoutLogPrint(tag: 1, child: wRow(' 800 ')),
+ * FittedBox(child: LayoutLogPrint(tag: 2, child: wRow(' 800 '))),
+ */
 class LayoutLogPrint<T> extends StatelessWidget {
   const LayoutLogPrint({
     super.key,

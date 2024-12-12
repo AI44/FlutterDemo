@@ -357,6 +357,13 @@ class ContainerDemo4 extends StatelessWidget {
               wRow(' 90000000000000000 '),
               SingleLineFittedBox(child: wRow(' 90000000000000000 ')),
               wRow(' 800 '),
+              /**
+               * 修改 maxWidth: constraints.maxWidth 前：
+               * 在指定主轴对齐方式为 spaceEvenly 的情况下，Row 在进行布局时会拿到父组件的约束，如果约束的 maxWidth 不是无限大，
+               * 则 Row 会根据子组件的数量和它们的大小在主轴方向来根据 spaceEvenly 填充算法来分割水平方向的长度，
+               * 最终Row 的宽度为 maxWidth；但如果 maxWidth 为无限大时，就无法在进行分割了，
+               * 所以此时 Row 就会将子组件的宽度之和作为自己的宽度。
+               */
               SingleLineFittedBox(child: wRow(' 800 ')),
             ].map((e) => Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20),
@@ -369,6 +376,7 @@ class ContainerDemo4 extends StatelessWidget {
   Widget wRow(String text) {
     Widget child = Text(text);
     child = Row(
+      // MainAxisAlignment.spaceEvenly，这会将水平方向的剩余显示空间均分成多份穿插在每一个 child之间
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [child, child, child],
     );
@@ -397,6 +405,112 @@ class SingleLineFittedBox extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+/**
+ * Scaffold
+ */
+class ContainerDemo5 extends StatefulWidget {
+  const ContainerDemo5({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _ContainerDemo5State();
+}
+
+class _ContainerDemo5State extends State<ContainerDemo5> {
+  int _selectedIndex = 1;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      //导航栏
+      appBar: AppBar(
+        title: const Text("App Name"),
+        actions: [
+          //导航栏右侧菜单
+          IconButton(icon: const Icon(Icons.share), onPressed: () {}),
+        ],
+      ),
+      drawer: const MyDrawer(), //抽屉
+      bottomNavigationBar: BottomNavigationBar(
+        // 底部导航
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+          BottomNavigationBarItem(icon: Icon(Icons.business), label: "Business"),
+          BottomNavigationBarItem(icon: Icon(Icons.school), label: "School"),
+        ],
+        currentIndex: _selectedIndex,
+        fixedColor: Colors.blue,
+        onTap: _onItemTapped,
+      ),
+      floatingActionButton: FloatingActionButton(
+          //悬浮按钮
+          onPressed: _onAdd, //悬浮按钮
+          child: const Icon(Icons.add)),
+    );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  void _onAdd() {}
+}
+
+class MyDrawer extends StatelessWidget {
+  const MyDrawer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: MediaQuery.removePadding(
+        context: context,
+        //移除抽屉菜单顶部默认留白
+        removeTop: true,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(top: 38.0),
+              child: Row(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: ClipOval(
+                      child: Image.asset(
+                        "graphics/background.jpg",
+                        width: 80,
+                      ),
+                    ),
+                  ),
+                  const Text(
+                    "test",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  )
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView(
+                children: const [
+                  ListTile(
+                    leading: Icon(Icons.add),
+                    title: Text('Add account'),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.settings),
+                    title: Text('Manage accounts'),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

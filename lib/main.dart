@@ -112,6 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    print('#################### main build');
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -148,14 +149,13 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
+            // 如果没有声明const，那么重建时会调用TestRebuild#build
+            const TestRebuild(),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            const Echo(text: "start12345678901234567890123456789012345678901234567890end"),
+            const TestRebuild2(),
             Expanded(
                 child: ListView.builder(
                     itemCount: PageProvider.getData().length,
@@ -181,5 +181,32 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButtonLocation:
           FloatingActionButtonLocation.startFloat, // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+}
+
+class TestRebuild extends StatelessWidget {
+  const TestRebuild({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    print('#################### TestRebuild build');
+    return const Text(
+      'You have pushed the button this many times:',
+    );
+  }
+}
+
+class TestRebuild2 extends StatefulWidget {
+  const TestRebuild2({super.key});
+
+  @override
+  State<StatefulWidget> createState() => TestRebuild2State();
+}
+
+class TestRebuild2State extends State<TestRebuild2> {
+  @override
+  Widget build(BuildContext context) {
+    print('#################### TestRebuild2 build');
+    return const Echo(text: "start12345678901234567890123456789012345678901234567890end");
   }
 }
