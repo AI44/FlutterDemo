@@ -1,0 +1,9 @@
+{
+  "@@last_modified": "2018-12-10T15:46:20.897228",
+  "@@locale": "zh_CH",
+  "title": "Flutter应用",
+  "hello": "你好",
+  "welcome": "欢迎使用 Flutter",
+  "test": "多语言测试",
+  "app_title": "app标题"
+}

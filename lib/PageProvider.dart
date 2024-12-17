@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 
 import 'demo10.dart';
+import 'demo11.dart';
+import 'demo12.dart';
 import 'demo2.dart';
 import 'demo3.dart';
 import 'demo4.dart';
@@ -139,6 +141,26 @@ class PageProvider {
         "ContainerDemo5",
         (context) => const ContainerDemo5(),
         "Scaffold",
+      ),
+      ItemData(
+        "LocalizationsDemo",
+        (context) => const LocalizationsDemo(),
+        "多语言",
+      ),
+      ItemData(
+        "GetXDemo",
+        (context) => GetXDemo(),
+        "GetX-简单状态管理",
+      ),
+      ItemData(
+        "GetXDemo2",
+        (context) => GetXDemo2(),
+        "GetX-响应式状态管理",
+      ),
+      ItemData(
+        "GetXDemo3",
+        (context) => GetXDemo3(),
+        "GetX-路由管理",
       ),
     });
 

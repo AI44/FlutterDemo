@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'PageProvider.dart';
 import 'demo1.dart';
@@ -30,6 +31,28 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'Flutter Demo',
+      supportedLocales: const [
+        Locale('en', 'US'), // English
+        Locale('zh', 'CN'), // 中文
+      ],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      localeListResolutionCallback: (List<Locale>? locales, Iterable<Locale> supportedLocales) {
+        if (locales == null) {
+          return supportedLocales.first;
+        }
+        // 遍历设备支持的语言列表，选择第一个匹配的
+        for (var locale in supportedLocales) {
+          if (supportedLocales.contains(locale)) {
+            return locale; // 返回找到的第一个匹配的语言环境
+          }
+        }
+        // 如果没有找到匹配的，返回默认语言环境
+        return supportedLocales.first;
+      },
       theme: ThemeData(
         // This is the theme of your application.
         //

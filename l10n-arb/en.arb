@@ -1,0 +1,14 @@
+{
+  "@@last_modified": "2018-12-10T15:46:20.897228",
+  "@@locale": "en",
+  "title": "Flutter应用",
+  "@title": {
+    "description": "@ 前缀用于为本地化条目（即字符串）添加注释和描述。它通常用于为翻译者提供额外的上下文信息，帮助他们更好地理解如何翻译该条目。",
+    "type": "text",
+    "placeholders": {}
+  },
+  "hello": "Hello",
+  "welcome": "Welcome to Flutter",
+  "test": "multilingual test",
+  "app_title": "app title"
+}
