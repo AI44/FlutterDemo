@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -83,16 +85,58 @@ class GetXDemo extends StatelessWidget {
   }
 }
 
+class TestModel {
+  bool a = false;
+  int b = 0;
+  String c = "";
+
+  @override
+  int get hashCode {
+    return a.hashCode ^ b.hashCode ^ c.hashCode;
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (other is TestModel) {
+      return other.a == a && other.b == b && other.c == c;
+    }
+    return false;
+  }
+}
+
 class CounterController2 extends GetxController {
   // 添加了.obs后缀，使这个变量可观察，当可观察变量值更新时，Obx包裹中的内容就会进行刷新，例如：Obx(() => Text(test.value))。
   var counter = 0.obs; // 声明为响应式变量
 
+  var obj = TestModel();
+  var model = TestModel().obs;
+
   void increment() => counter++;
+
+  void test() {
+    counter.value = 1;
+    counter.value = 2;
+  }
+
+  void test2() {
+    var o2 = TestModel();
+    Random random = Random();
+    o2.a = random.nextBool();
+    o2.b = random.nextInt(100);
+    model.value = o2;
+
+    // model.update((value) {
+    //   value?.a = true;
+    // });
+  }
 }
 
 /**
  * 响应式状态管理 (Rx)
  * 适用于需要频繁更新的场景
+ *
+ * 测试发现：Obx值一样时不会重复触发监听，对象类型需要重写hasCode和==，否则对象内的变量改变不会触发更新。
+ *
  */
 class GetXDemo2 extends StatelessWidget {
   GetXDemo2({super.key});
@@ -106,10 +150,22 @@ class GetXDemo2 extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(title: Text('GetX Demo2')),
         body: Center(
-          child: Obx(() => Text('Counter: ${counterController.counter}')),
+          child: Column(
+            children: [
+              Obx(() {
+                print('obx ${counterController.counter}');
+                return Text('Counter: ${counterController.counter}');
+              }),
+              Obx(() {
+                print('obx2 ${counterController.model.value.b}');
+                return Text('Counter: ${counterController.model.value.a}');
+              }),
+            ],
+          ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: counterController.increment,
+          // onPressed: counterController.increment,
+          onPressed: counterController.test2,
           child: Icon(Icons.add),
         ),
       ),
