@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -107,6 +108,8 @@ class TestModel {
 class CounterController2 extends GetxController {
   // 添加了.obs后缀，使这个变量可观察，当可观察变量值更新时，Obx包裹中的内容就会进行刷新，例如：Obx(() => Text(test.value))。
   var counter = 0.obs; // 声明为响应式变量
+  final num2 = 2.obs;
+  final num3 = 3.obs;
 
   var obj = TestModel();
   var model = TestModel().obs;
@@ -129,6 +132,17 @@ class CounterController2 extends GetxController {
     //   value?.a = true;
     // });
   }
+
+  void test3() {
+    Random random = Random();
+    counter.value = random.nextInt(40);
+    num2.value = random.nextInt(40);
+    num3.value = random.nextInt(60);
+  }
+
+  int getComNum() {
+    return counter.value + num2.value + num3.value;
+  }
 }
 
 /**
@@ -146,6 +160,13 @@ class GetXDemo2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('GetXDemo2:build');
+    final result = combineLatest([counterController.num2, counterController.num3, counterController.counter], (list) {
+      return list[0].value + list[1].value + list[2].value;
+    }, (clean) {});
+    final result2 =
+        combineLatest3(counterController.num2, counterController.num3, counterController.counter, (x, y, z) {
+      return x.value + y.value + z.value;
+    }, (clean) {});
     return GetMaterialApp(
       home: Scaffold(
         appBar: AppBar(title: Text('GetX Demo2')),
@@ -160,12 +181,27 @@ class GetXDemo2 extends StatelessWidget {
                 print('obx2 ${counterController.model.value.b}');
                 return Text('Counter: ${counterController.model.value.a}');
               }),
+              Obx(() {
+                print('obx3 ${result.value}');
+                return Text('result: ${result.value}');
+              }),
+              Obx(() {
+                // 即使嵌套也能监控到
+                final temp = counterController.getComNum();
+                print('obx4 $temp');
+                return Text('result: $temp');
+              }),
+              Obx(() {
+                print('obx4 ${result2.value}');
+                return Text('result: ${result2.value}');
+              }),
             ],
           ),
         ),
         floatingActionButton: FloatingActionButton(
           // onPressed: counterController.increment,
-          onPressed: counterController.test2,
+          // onPressed: counterController.test2,
+          onPressed: counterController.test3,
           child: Icon(Icons.add),
         ),
       ),
@@ -301,7 +337,8 @@ class GetXDemoSecondPage extends StatelessWidget {
             onPressed: () {
               Get.back();
             },
-            child: Text("back: ${args['name']}, Age: ${args['age']}, ${service.hashCode}")),
+            child: Text(
+                "back: ${args['name']}, Age: ${args['age']}, ${service.hashCode}, ${service.test()}, ${service.test2()}")),
       ),
     );
   }
@@ -312,4 +349,61 @@ class MyService extends GetxService {
     print("Service initialized");
     return this;
   }
+}
+
+extension on MyService {
+  int test() {
+    return 100;
+  }
+}
+
+extension on MyService {
+  int test2() {
+    return 200;
+  }
+}
+
+Rx<T> combineLatest<T>(
+  List<Rx> list,
+  T Function(List<Rx>) combiner,
+  void Function(void Function()) clean,
+) {
+  final result = Rx<T>(combiner(list));
+  final lst = list.map((item) {
+    return item.listen((data) {
+      result.value = combiner(list);
+    });
+  }).toList();
+  clean(() {
+    for (var item in lst) {
+      item.cancel();
+    }
+  });
+  return result;
+}
+
+Rx<T> combineLatest3<T, X, Y, Z>(
+  Rx<X> x,
+  Rx<Y> y,
+  Rx<Z> z,
+  T Function(Rx<X>, Rx<Y>, Rx<Z>) combiner,
+  void Function(void Function()) clean,
+) {
+  final result = Rx<T>(combiner(x, y, z));
+  final List<StreamSubscription> lst = [];
+  lst.add(x.listen((data) {
+    result.value = combiner(x, y, z);
+  }));
+  lst.add(y.listen((data) {
+    result.value = combiner(x, y, z);
+  }));
+  lst.add(z.listen((data) {
+    result.value = combiner(x, y, z);
+  }));
+  clean(() {
+    for (var item in lst) {
+      item.cancel();
+    }
+  });
+  return result;
 }
