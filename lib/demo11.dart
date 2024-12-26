@@ -36,7 +36,7 @@ class LocalizationsDemoState extends State<LocalizationsDemo> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(MyLocalizations.of(context).getString("title")),
+        title: Text("${MyLocalizations.of(context).getString("title")} - 需要运行本demo的main"),
       ),
       body: Column(
         children: [

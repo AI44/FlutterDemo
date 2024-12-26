@@ -12,3 +12,20 @@ extension IterableExt<T> on Iterable<T> {
     return null;
   }
 }
+
+extension ListExt<T> on List<T> {
+  T? removeFirstExt(bool Function(T) test) {
+    final len = length;
+    for (int i = 0; i < len; i++) {
+      if (test(this[i])) return removeAt(i);
+    }
+    return null;
+  }
+
+  T? lastOrNullExt(bool Function(T) test) {
+    for (T element in reversed) {
+      if (test(element)) return element;
+    }
+    return null;
+  }
+}

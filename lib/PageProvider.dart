@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'demo10.dart';
 import 'demo11.dart';
 import 'demo12.dart';
+import 'demo13.dart';
 import 'demo2.dart';
 import 'demo3.dart';
 import 'demo4.dart';
@@ -161,6 +162,11 @@ class PageProvider {
         "GetXDemo3",
         (context) => GetXDemo3(),
         "GetX-路由管理",
+      ),
+      ItemData(
+        "CustomWidget",
+        (context) => CustomWidget(),
+        "绘图 & 事件",
       ),
     });
 
